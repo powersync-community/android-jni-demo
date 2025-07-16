@@ -60,7 +60,7 @@ class DemoConnector(private val client: HttpClient): PowerSyncBackendConnector()
             }
         })
 
-        client.post("http://10.0.2.2:6061/api/data") {
+        client.post("http://10.0.2.2:6060/api/data") {
             contentType(ContentType.Application.Json)
             setBody(request)
         }

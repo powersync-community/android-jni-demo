@@ -5,7 +5,7 @@
 
 namespace PowerSync {
     std::string get(const std::string& url);
-
+    std::string postJson(const std::string& url, const std::string& body);
 } // PowerSync
 
 #endif //POWERSYNCANDROIDEXAMPLE_OKHTTP_H

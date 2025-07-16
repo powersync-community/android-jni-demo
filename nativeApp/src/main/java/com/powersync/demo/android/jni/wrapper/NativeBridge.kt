@@ -2,6 +2,8 @@ package com.powersync.demo.android.jni.wrapper
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.powersync.DatabaseDriverFactory
 import com.powersync.PowerSyncDatabase
 import kotlinx.serialization.*
@@ -32,6 +34,9 @@ object NativeBridge {
 
    @JvmStatic
    private external fun init()
+
+   @JvmStatic
+   external fun createList(name: String)
 
    init {
        System.loadLibrary("powersync_jni_demo")
@@ -78,5 +83,12 @@ object NativeBridge {
             Log.e("NativeBridge", "creating database failed", e)
             throw e
         }
+    }
+
+    val todoItems = mutableStateOf<String?>(null)
+
+    @JvmStatic
+    fun setTodoItemsResults(results: String) {
+        todoItems.value = results
     }
 }

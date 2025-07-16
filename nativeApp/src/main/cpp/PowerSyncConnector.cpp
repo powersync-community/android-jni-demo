@@ -64,8 +64,8 @@ Java_com_powersync_demo_android_jni_wrapper_NativeConnector_fetchCredentialsC(
 }
 
 extern "C" JNIEXPORT jobject JNICALL
-Java_com_powersync_demo_android_jni_wrapper_wrapper_uploadDataC(
-    JNIEnv *env, jobject thiz, jstring op, jstring table, jstring data) {
+Java_com_powersync_demo_android_jni_wrapper_NativeConnector_uploadDataC(
+    JNIEnv *env, jobject thiz, jstring rowId, jstring op, jstring table, jstring data) {
   jclass cls = env->GetObjectClass(thiz);
   jfieldID fid = env->GetFieldID(cls, "identifier", "Ljava/lang/String;");
   auto identifier = (jstring)env->GetObjectField(thiz, fid);
@@ -82,15 +82,19 @@ Java_com_powersync_demo_android_jni_wrapper_wrapper_uploadDataC(
     throw std::runtime_error("Upload callback not found");
   }
 
+  std::string rowIdStr = env->GetStringUTFChars(rowId, nullptr);
   std::string opStr = env->GetStringUTFChars(op, nullptr);
   std::string tableStr = env->GetStringUTFChars(table, nullptr);
   std::string dataStr = env->GetStringUTFChars(data, nullptr);
 
   auto checkpoint =
-      connector_tuple->second.upload_callback(opStr, tableStr, dataStr);
+      connector_tuple->second.upload_callback(rowIdStr, opStr, tableStr, dataStr);
 
-  jstring jcheckpoint = env->NewStringUTF(checkpoint.c_str());
-  return jcheckpoint;
+  if (checkpoint.has_value()) {
+      return env->NewStringUTF((*checkpoint).c_str());
+  } else {
+      return nullptr;
+  }
 }
 
 Connector::Connector(CredentialsCallback credentials_callback,

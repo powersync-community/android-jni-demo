@@ -11,7 +11,7 @@ namespace PowerSync {
 typedef std::function<std::tuple<std::string, std::string>()>
     CredentialsCallback;
 
-typedef std::function<std::string(const std::string&, const std::string&, const std::string&)>
+typedef std::function<std::optional<std::string>(const std::string& id, const std::string&, const std::string&, const std::string&)>
     UploadCallback;
 
 class Connector {

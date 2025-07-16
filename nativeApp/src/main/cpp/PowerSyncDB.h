@@ -15,6 +15,7 @@ public:
   void connect(Connector connector);
   void register_status_listener(
       std::function<void(const std::string &status)> status_callback);
+  void register_table_listener(std::function<void()> callback);
 
 private:
   std::string id;

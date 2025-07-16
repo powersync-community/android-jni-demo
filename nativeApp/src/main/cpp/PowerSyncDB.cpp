@@ -12,17 +12,32 @@ namespace PowerSync {
 std::map<std::string, std::function<void(const std::string &status)>>
     status_callbacks;
 
+std::map<std::string, std::function<void()>>
+    table_callbacks;
+
+
 extern "C" JNIEXPORT void JNICALL
-Java_com_powersync_demo_android_jni_wrapper_NativeDB_syncStatusCallback(JNIEnv *env,
+Java_com_powersync_demo_android_jni_wrapper_NativeDB_tablesChangedCallback(JNIEnv *env,
                                                               jobject thiz,
-                                                              jstring status,
                                                               jstring id) {
   std::string idStr = std::string(env->GetStringUTFChars(id, nullptr));
-  std::string statusStr = std::string(env->GetStringUTFChars(status, nullptr));
-  auto callbackIt = status_callbacks.find(idStr);
-  if (callbackIt != status_callbacks.end()) {
-    callbackIt->second(statusStr);
+  auto callbackIt = table_callbacks.find(idStr);
+  if (callbackIt != table_callbacks.end()) {
+    callbackIt->second();
   }
+}
+
+extern "C" JNIEXPORT void JNICALL
+Java_com_powersync_demo_android_jni_wrapper_NativeDB_syncStatusCallback(JNIEnv *env,
+jobject thiz,
+        jstring status,
+jstring id) {
+std::string idStr = std::string(env->GetStringUTFChars(id, nullptr));
+std::string statusStr = std::string(env->GetStringUTFChars(status, nullptr));
+auto callbackIt = status_callbacks.find(idStr);
+if (callbackIt != status_callbacks.end()) {
+callbackIt->second(statusStr);
+}
 }
 
 DB::DB(Schema schema) : db(db) {
@@ -132,6 +147,10 @@ void DB::register_status_listener(
     std::function<void(const std::string &)> status_callback) {
 
   status_callbacks[id] = std::move(status_callback);
+}
+
+void DB::register_table_listener(std::function<void()> callback) {
+    table_callbacks[id] = std::move(callback);
 }
 
 } // namespace PowerSync
