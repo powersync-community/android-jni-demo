@@ -93,15 +93,6 @@ fun MainContent() {
                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(8.dp)) {
                         var text by remember { mutableStateOf(TextFieldValue()) }
 
-                        OutlinedTextField(
-                            value = text,
-                            onValueChange = { text = it },
-                            modifier = Modifier.weight(weight = 1F),
-                            label = { Text("Add list via C++") }
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
                         IconButton(
                             enabled = text.text.isNotBlank(),
                             onClick = {
@@ -114,6 +105,15 @@ fun MainContent() {
                                 contentDescription = null
                             )
                         }
+
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        OutlinedTextField(
+                            value = text,
+                            onValueChange = { text = it },
+                            modifier = Modifier.weight(weight = 1F),
+                            label = { Text("Add list via C++") }
+                        )
                     }
                 }
             }

@@ -3,7 +3,6 @@
 #include "PowerSyncDB.h"
 #include "PowerSyncSchema.h"
 #include "utils.h"
-#include "secrets.h"
 #include <android/log.h>
 #include <jni.h>
 #include <memory>
@@ -76,7 +75,7 @@ using json = nlohmann::json;
         jsonOp["data"] = json::parse(data);
         request["batch"] = json::array({jsonOp});
 
-        PowerSync::postJson("http://10.0.2.2:6061/api/data", request.dump());
+        PowerSync::postJson("http://10.0.2.2:6060/api/data", request.dump());
         return std::nullopt;
       });
 
