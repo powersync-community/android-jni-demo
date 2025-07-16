@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.powersync.demo.android.jni"
+    namespace = "com.powersync.demo.android.kotlinapp"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.powersync.demo.android.jni"
+        applicationId = "com.powersync.demo.android.kotlinapp"
         minSdk = 28
         targetSdk = 36
         versionCode = 1
@@ -38,13 +38,6 @@ android {
     buildFeatures {
         compose = true
     }
-
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.22.1"
-        }
-    }
 }
 
 dependencies {
@@ -56,12 +49,15 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.okhttp)
-
+    implementation(libs.androidx.material.icons)
     implementation(libs.powersync.core)
+    implementation(libs.powersync.compose)
+    implementation(libs.koin.core)
+    implementation(libs.koin.compose.viewmodel)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.contentnegotiation)
+    implementation(libs.ktor.client.json)
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)

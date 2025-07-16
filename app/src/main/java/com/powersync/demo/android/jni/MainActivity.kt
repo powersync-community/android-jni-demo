@@ -17,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +26,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.powersync.demo.android.jni.ui.theme.PowerSyncJNIDemoApplicationTheme
 import com.powersync.demo.android.jni.wrapper.NativeBridge
 import com.powersync.demo.android.jni.wrapper.NativeDB
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,10 +45,13 @@ class MainActivity : ComponentActivity() {
 fun MainContent() {
     var didStartDemo by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     fun startDemo() {
         didStartDemo = true
-        NativeBridge.start(context)
+        scope.launch(Dispatchers.IO) {
+            NativeBridge.start(context)
+        }
     }
 
     PowerSyncJNIDemoApplicationTheme {

@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "PowerSync JNI demo application"
 include(":app")
+include(":kotlinApp")
