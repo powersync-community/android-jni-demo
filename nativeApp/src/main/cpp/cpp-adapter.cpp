@@ -7,6 +7,7 @@
 #include <jni.h>
 #include <memory>
 #include <string>
+#include <sstream>
 #include <json.hpp>
 #include "OkHttp.h"
 
@@ -89,13 +90,23 @@ using json = nlohmann::json;
   });
 
   powersync_db->register_table_listener([env]() {
-    auto getAllRes = powersync_db->getAll("SELECT * FROM todos", {});
+    auto getAllRes = powersync_db->getAll("SELECT name FROM lists", {});
     __android_log_print(ANDROID_LOG_INFO, "PowerSyncDB",
     "🟩 getAll call res: %s", getAllRes.c_str());
 
+    json rows = json::parse(getAllRes);
+    std::stringstream results;
+    results << "List items: \n";
+    for (const auto& row : rows) {
+        auto text = row.template get<std::string>();
+        auto parsedRow = json::parse(text);
+
+        results << " - " << parsedRow["name"] << "\n";
+    }
+
     auto bridge = env->FindClass("com/powersync/demo/android/jni/wrapper/NativeBridge");
     auto set_items = env->GetStaticMethodID(bridge, "setTodoItemsResults", "(Ljava/lang/String;)V");
-    env->CallStaticVoidMethod(bridge, set_items, env->NewStringUTF(getAllRes.c_str()));
+    env->CallStaticVoidMethod(bridge, set_items, env->NewStringUTF(results.str().c_str()));
   });
 
   // 5 You can use your custom connector
