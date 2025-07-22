@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.powersync.DatabaseDriverFactory
+import com.powersync.ExperimentalPowerSyncAPI
 import com.powersync.PowerSyncDatabase
 import com.powersync.compose.composeState
 import com.powersync.connectors.PowerSyncBackendConnector
@@ -24,6 +25,8 @@ import com.powersync.demo.android.kotlinapp.state.Todo
 import com.powersync.demo.android.kotlinapp.ui.components.EditDialog
 import com.powersync.demo.android.kotlinapp.ui.screens.HomeScreen
 import com.powersync.demo.android.kotlinapp.ui.screens.TodosScreen
+import com.powersync.sync.ConnectionMethod
+import com.powersync.sync.SyncOptions
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -65,6 +68,7 @@ fun App(
     }
 }
 
+@OptIn(ExperimentalPowerSyncAPI::class)
 @Composable
 private fun AppContent(
     modifier: Modifier = Modifier,
@@ -73,7 +77,15 @@ private fun AppContent(
 ) {
     LaunchedEffect(Unit) {
         try {
-            db.connect(connector)
+            // The newClientImplementation is an upcoming option to offload most of the sync work
+            // into a Rust library, improving performance. While it is currently considered
+            // experimental, we're in the process of stabilizing it.
+            db.connect(connector, options = SyncOptions(
+                newClientImplementation = true,
+                // Http is currently the default, but that might change to WebSocket in the future,
+                // so you can also select HTTP explicitly.
+                method = ConnectionMethod.Http,
+            ))
             awaitCancellation()
         } finally {
             withContext(NonCancellable) {
